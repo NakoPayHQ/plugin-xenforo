@@ -1,0 +1,30 @@
+<xf:title>NakoPay Settings</xf:title>
+
+<xf:form action="{{ link('options/update') }}" ajax="true" class="block">
+    <div class="block-container">
+        <div class="block-body">
+            <xf:textboxrow name="options[nakoPayApiKey]"
+                value="{$options.nakoPayApiKey}"
+                label="API Key"
+                hint="Your secret key. Use sk_test_... while testing, sk_live_... in production."
+                explain="Get an API key at https://nakopay.com/dashboard/api-keys" />
+
+            <xf:textboxrow name="options[nakoPayWebhookSecret]"
+                value="{$options.nakoPayWebhookSecret}"
+                label="Webhook Signing Secret"
+                hint="Paste the signing secret shown when you created the webhook endpoint in NakoPay." />
+
+            <xf:textboxrow name="options[nakoPayCurrency]"
+                value="{$options.nakoPayCurrency}"
+                label="Currency"
+                hint="Fiat currency for pricing (e.g. USD, EUR, GBP)." />
+        </div>
+        <xf:submitrow icon="save" />
+    </div>
+</xf:form>
+
+<div class="block">
+    <div class="block-body" style="padding: 10px;">
+        <strong>Plugin version:</strong> {$version}
+    </div>
+</div>
