@@ -1,0 +1,17 @@
+{
+    "legacy_addon_id": "",
+    "addon_id": "NakoPay/Payments",
+    "title": "NakoPay Bitcoin Payments",
+    "description": "Accept Bitcoin payments on your XenForo forum - user upgrades, subscriptions, premium content.",
+    "version_id": 1000010,
+    "version_string": "0.1.0",
+    "dev": "",
+    "dev_url": "",
+    "faq_url": "",
+    "support_url": "https://github.com/NakoPayHQ/plugin-xenforo/issues",
+    "extra_urls": {
+        "homepage": "https://nakopay.com/integrations"
+    },
+    "require": [],
+    "icon": ""
+}

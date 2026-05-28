@@ -1,0 +1,67 @@
+<xf:title>Bitcoin Payment</xf:title>
+
+<div class="block" style="max-width: 420px; margin: 20px auto;">
+    <div class="block-container">
+        <div class="block-body" style="text-align: center; padding: 20px;">
+            <h2 class="block-header">Pay with Bitcoin</h2>
+
+            <p>Scan the QR code or copy the address below to send your payment.</p>
+
+            <div id="nakopay-qr" style="margin: 15px auto;">
+                <canvas id="nakopay-qr-canvas" width="200" height="200"></canvas>
+            </div>
+
+            <table class="dataList" style="margin: 0 auto;">
+                <tr class="dataList-row">
+                    <td class="dataList-cell"><strong>Address:</strong></td>
+                    <td class="dataList-cell">
+                        <code id="nakopay-address" style="word-break: break-all;">{$order.address}</code>
+                        <button type="button" class="button--link" onclick="navigator.clipboard.writeText(document.getElementById('nakopay-address').textContent)">Copy</button>
+                    </td>
+                </tr>
+                <tr class="dataList-row">
+                    <td class="dataList-cell"><strong>Amount:</strong></td>
+                    <td class="dataList-cell"><code>{$order.amount_crypto}</code> {$order.coin} (~{$order.amount_fiat} {$order.currency})</td>
+                </tr>
+                <tr class="dataList-row">
+                    <td class="dataList-cell"><strong>Status:</strong></td>
+                    <td class="dataList-cell" id="nakopay-status">Waiting for payment...</td>
+                </tr>
+            </table>
+
+            <xf:if is="$order.bip21">
+                <div style="margin-top: 15px;">
+                    <a href="{$order.bip21}" class="button button--primary">Open in Wallet</a>
+                </div>
+            </xf:if>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"></script>
+<script>
+(function() {
+    var bip21 = '{$order.bip21|raw}';
+    var addr  = '{$order.address|raw}';
+    if (bip21 || addr) {
+        new QRious({ element: document.getElementById('nakopay-qr-canvas'), value: bip21 || addr, size: 200, level: 'M' });
+    }
+
+    var invoiceId = '{$order.nakopay_invoice_id|raw}';
+    if (!invoiceId) return;
+    var pollUrl = XF.canonicalizeUrl('index.php?nakopay/poll&invoice_id=' + encodeURIComponent(invoiceId));
+    var interval = setInterval(function() {
+        fetch(pollUrl).then(function(r) { return r.json(); }).then(function(d) {
+            var el = document.getElementById('nakopay-status');
+            if (d.status === 'paid' || d.status === 'completed') {
+                el.innerHTML = '<span style="color:green;font-weight:bold;">Payment received!</span>';
+                clearInterval(interval);
+                if (d.redirect) setTimeout(function() { window.location.href = d.redirect; }, 3000);
+            } else if (d.status === 'expired') {
+                el.innerHTML = '<span style="color:red;">Invoice expired.</span>';
+                clearInterval(interval);
+            }
+        }).catch(function() {});
+    }, 5000);
+})();
+</script>
